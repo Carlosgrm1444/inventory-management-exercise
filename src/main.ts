@@ -14,6 +14,10 @@ async function bootstrap() {
   //   database: process.env.DB_NAME,
   //   autoLoadEntities: true,
   // });
+  const dump = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => key.startsWith('DB_')),
+  );
+  console.log('🌍 DUMP de process.env:', dump);
 
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
