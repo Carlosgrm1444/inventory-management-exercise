@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as process from 'process';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -19,18 +18,39 @@ function parseBool(value: string | undefined): boolean {
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '3306', 10),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      autoLoadEntities: true,
-      synchronize: parseBool(process.env.DB_SYNCHRONIZE),
+    // ConfigModule.forRoot({
+    //   isGlobal: true,
+    // }),
+    // TypeOrmModule.forRoot({
+    //   type: 'mysql',
+    //   host: process.env.DB_HOST,
+    //   port: parseInt(process.env.DB_PORT || '3306', 10),
+    //   username: process.env.DB_USERNAME,
+    //   password: process.env.DB_PASSWORD,
+    //   database: process.env.DB_NAME,
+    //   autoLoadEntities: true,
+    //   synchronize: parseBool(process.env.DB_SYNCHRONIZE),
+    // }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const dbUrl = new URL(configService.get<string>('DATABASE_URL') || '');
+
+        const config = {
+          type: 'mysql' as const,
+          host: dbUrl.hostname,
+          port: parseInt(dbUrl.port || '3306', 10),
+          username: dbUrl.username,
+          password: dbUrl.password,
+          database: dbUrl.pathname.replace('/', ''),
+          autoLoadEntities: true,
+          synchronize: configService.get<string>('DB_SYNCHRONIZE') === 'true',
+        };
+
+        console.log('🌐 Config de Railway con DATABASE_URL:', config);
+        return config;
+      },
     }),
     AuthModule,
     UsersModule,
