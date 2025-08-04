@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -77,8 +78,22 @@ export class ProductsController {
     return this.productsService.decreaseStock(id, dto.amount);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/product/:id')
   getHistoryByProduct(@Param('id', ParseIntPipe) id: number) {
     return this.stockService.findByProduct(id);
+  }
+
+  // ! Filtros de busqueda
+  @UseGuards(AuthGuard('jwt'))
+  @Get('search')
+  async search(@Query('q') query: string) {
+    return this.productsService.searchByNameOrDescription(query);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('by-category')
+  async findByCategory(@Query('categoryId') categoryId: number) {
+    return this.productsService.findByCategory(+categoryId);
   }
 }

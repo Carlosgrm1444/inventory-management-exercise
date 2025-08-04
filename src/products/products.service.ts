@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { StockMovement } from '../stock/entity/stock-movement.entity';
 import { Product } from './entity/product.entity';
 
@@ -34,6 +34,7 @@ export class ProductsService {
     return this.productRepository.delete(id);
   }
 
+  // ! Control de stock
   async increaseStock(id: number, amount: number) {
     const product = await this.productRepository.findOne({ where: { id } });
     if (!product) throw new NotFoundException('Producto no encontrado');
@@ -66,5 +67,24 @@ export class ProductsService {
     });
 
     return product;
+  }
+
+  // ! filtros de busqueda
+  async searchByNameOrDescription(term: string): Promise<Product[]> {
+    return this.productRepository.find({
+      where: [{ name: Like(`%${term}%`) }, { description: Like(`%${term}%`) }],
+      relations: ['category'],
+    });
+  }
+
+  async findByCategory(categoryId: number): Promise<Product[]> {
+    return this.productRepository.find({
+      where: {
+        category: {
+          id: categoryId,
+        },
+      },
+      relations: ['category'],
+    });
   }
 }
