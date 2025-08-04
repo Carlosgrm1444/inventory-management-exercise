@@ -1,70 +1,43 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { CategoriesModule } from './categories/categories.module';
-import { ProductsModule } from './products/products.module';
-import { RolesModule } from './roles/roles.module';
-import { StockModule } from './stock/stock.module';
-import { UsersModule } from './users/users.module';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      // Usa .env solo localmente. Railway no lo necesita.
-      envFilePath: '.env',
-    }),
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        // 🔍 Cargar y validar manualmente
-        const host = configService.get<string>('DB_HOST');
-        const portStr = configService.get<string>('DB_PORT') || '3306';
-        const port = parseInt(portStr, 10);
-        const username = configService.get<string>('DB_USERNAME');
-        const password = configService.get<string>('DB_PASSWORD');
-        const database = configService.get<string>('DB_NAME');
-        const synchronizeStr = configService.get<string>('DB_SYNCHRONIZE');
-        const synchronize = synchronizeStr === 'true';
+  const host = configService.get<string>('DB_HOST');
+  const portDB = configService.get<string>('DB_PORT');
+  const username = configService.get<string>('DB_USERNAME');
+  const password = configService.get<string>('DB_PASSWORD');
+  const database = configService.get<string>('DB_NAME');
 
-        const config = {
-          type: 'mysql' as const,
-          host,
-          port,
-          username,
-          password,
-          database,
-          autoLoadEntities: true,
-          synchronize,
-        };
+  console.log('🌐 ENV desde ConfigService:', {
+    type: 'mysql',
+    host,
+    port: portDB,
+    username,
+    password,
+    database,
+  });
 
-        // 🚨 Validación básica (opcional)
-        if (!host || !username || !password || !database) {
-          console.error(
-            '❌ Error: Faltan variables de entorno para la base de datos',
-          );
-        }
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-        // ✅ Mostrar configuración usada
-        console.log('🌐 TypeORM Config desde entorno:', config);
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('API de Inventario')
+    .setDescription('Documentación de la API para gestión de inventario')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
 
-        return config;
-      },
-    }),
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('docs', app, document);
 
-    AuthModule,
-    UsersModule,
-    ProductsModule,
-    CategoriesModule,
-    RolesModule,
-    StockModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
+  const appPort = configService.get<number>('PORT') || 3000;
+  await app.listen(appPort);
+
+  console.log(`🚀 Servidor iniciado en http://localhost:${appPort}`);
+}
+bootstrap();
