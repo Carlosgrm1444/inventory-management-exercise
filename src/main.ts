@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   console.log('🌐 ENV desde Railway:', {
     type: 'mysql',
-    host: process.env.RAILWAY_SERVICE_ID,
+    host: process.env.RAILWAY_MYSQLHOST,
     port: parseInt(process.env.MYSQLPORT || '3306', 10),
     username: process.env.MYSQLUSER,
     password: process.env.MYSQLPASSWORD,
