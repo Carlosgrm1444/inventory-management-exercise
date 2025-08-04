@@ -22,6 +22,12 @@ async function bootstrap() {
 
   // ✅ Escucha en el puerto
   await app.listen(process.env.PORT || 3000);
+
+  console.log('🔍 ENV config on Railway:', {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USERNAME,
+    pass: process.env.DB_PASSWORD,
+  });
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();
