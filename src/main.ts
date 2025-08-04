@@ -4,14 +4,23 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  // console.log('🌐 ENV desde Railway:', {
+  //   type: 'mysql',
+  //   host: process.env.DB_HOST,
+  //   port: parseInt(process.env.DB_PORT || '3306', 10),
+  //   username: process.env.DB_USERNAME,
+  //   password: process.env.DB_PASSWORD,
+  //   database: process.env.DB_NAME,
+  //   autoLoadEntities: true,
+  // });
+
   console.log('🌐 ENV desde Railway:', {
     type: 'mysql',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '3306', 10),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    autoLoadEntities: true,
+    host: configService.get('DB_HOST'),
+    port: configService.get('DB_PORT'),
+    username: configService.get('DB_USERNAME'),
+    password: configService.get('DB_PASSWORD'),
+    database: configService.get('DB_NAME'),
   });
 
   const app = await NestFactory.create(AppModule);
