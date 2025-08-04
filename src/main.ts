@@ -14,26 +14,49 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // Usa .env solo localmente. Railway no lo necesita.
+      envFilePath: '.env',
     }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        // 🔍 Cargar y validar manualmente
+        const host = configService.get<string>('DB_HOST');
+        const portStr = configService.get<string>('DB_PORT') || '3306';
+        const port = parseInt(portStr, 10);
+        const username = configService.get<string>('DB_USERNAME');
+        const password = configService.get<string>('DB_PASSWORD');
+        const database = configService.get<string>('DB_NAME');
+        const synchronizeStr = configService.get<string>('DB_SYNCHRONIZE');
+        const synchronize = synchronizeStr === 'true';
+
         const config = {
           type: 'mysql' as const,
-          host: configService.get<string>('DB_HOST'),
-          port: parseInt(configService.get<string>('DB_PORT') || '3306', 10),
-          username: configService.get<string>('DB_USERNAME'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_NAME'),
+          host,
+          port,
+          username,
+          password,
+          database,
           autoLoadEntities: true,
-          synchronize: configService.get<string>('DB_SYNCHRONIZE') === 'true',
+          synchronize,
         };
 
-        console.log('🌐 TypeORM Config desde Railway:', config);
+        // 🚨 Validación básica (opcional)
+        if (!host || !username || !password || !database) {
+          console.error(
+            '❌ Error: Faltan variables de entorno para la base de datos',
+          );
+        }
+
+        // ✅ Mostrar configuración usada
+        console.log('🌐 TypeORM Config desde entorno:', config);
+
         return config;
       },
     }),
+
     AuthModule,
     UsersModule,
     ProductsModule,
