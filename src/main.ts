@@ -9,7 +9,8 @@ async function bootstrap() {
     type: 'mysql',
     host: process.env.DB_HOST,
     port: parseInt(process.env.DB_PORT || '3306', 10),
-    username: process.env.DB_USERNAME,
+    username: process.env.RAILWAY_PUBLIC_DOMAIN,
+
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     autoLoadEntities: true,
