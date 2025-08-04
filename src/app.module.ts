@@ -22,20 +22,25 @@ import { UsersModule } from './users/users.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const dbConfig = {
+        const host = configService.get('DB_HOST');
+        const port = configService.get('DB_PORT');
+        const user = configService.get('DB_USERNAME');
+        const pass = configService.get('DB_PASSWORD');
+        const db = configService.get('DB_NAME');
+
+        const config = {
           type: 'mysql' as const,
-          host: configService.get<string>('DB_HOST'),
-          port: parseInt(configService.get<string>('DB_PORT') || '3306', 10),
-          username: configService.get<string>('DB_USERNAME'),
-          password: configService.get<string>('DB_PASSWORD'),
-          database: configService.get<string>('DB_NAME'),
-          synchronize: configService.get<string>('DB_SYNCHRONIZE') === 'true',
+          host,
+          port: parseInt(port || '3306', 10),
+          username: user,
+          password: pass,
+          database: db,
+          synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
           autoLoadEntities: true,
         };
 
-        console.log('🌐 TypeORM Config cargado:', dbConfig);
-
-        return dbConfig;
+        console.log('🌐 TypeORM Config cargado:', config);
+        return config;
       },
     }),
     AuthModule,
