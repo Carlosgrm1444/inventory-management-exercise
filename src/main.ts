@@ -5,48 +5,32 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  // console.log('🌐 ENV desde Railway:', {
-  //   type: 'mysql',
-  //   host: process.env.DB_HOST,
-  //   port: parseInt(process.env.DB_PORT || '3306', 10),
-  //   username: process.env.DB_USERNAME,
-  //   password: process.env.DB_PASSWORD,
-  //   database: process.env.DB_NAME,
-  //   autoLoadEntities: true,
-  // });
-  const dump = Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => key.startsWith('DB_')),
-  );
-  console.log('🌍 DUMP de process.env:', dump);
-
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
   console.log('🌐 ENV desde Railway:', {
     type: 'mysql',
-    host: configService.get('DB_HOST'),
-    port: configService.get('DB_PORT'),
-    username: configService.get('DB_USERNAME'),
-    password: configService.get('DB_PASSWORD'),
-    database: configService.get('DB_NAME'),
+    host: configService.get<string>('DB_HOST'),
+    port: configService.get<string>('DB_PORT'),
+    username: configService.get<string>('DB_USERNAME'),
+    password: configService.get<string>('DB_PASSWORD'),
+    database: configService.get<string>('DB_NAME'),
   });
 
-  // ✅ Validaciones globales
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-  // ✅ Configuración de Swagger
   const config = new DocumentBuilder()
     .setTitle('API de Inventario')
     .setDescription('Documentación de la API para gestión de inventario')
     .setVersion('1.0')
-    .addBearerAuth() // para usar JWT desde Swagger UI
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document); // Disponible en /docs
+  SwaggerModule.setup('docs', app, document);
 
-  // ✅ Escucha en el puerto
-  await app.listen(process.env.PORT || 3000);
+  const port = configService.get<number>('PORT') || 3000;
+  await app.listen(port);
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();
