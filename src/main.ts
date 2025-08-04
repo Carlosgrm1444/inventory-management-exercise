@@ -5,15 +5,15 @@ import * as process from 'process';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  console.log('🌐 ENV desde Railway:', {
-    type: 'mysql',
-    host: process.env.MYSQLHOST,
-    port: parseInt(process.env.MYSQLPORT || '3306', 10),
-    username: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQL_DATABASE,
-    autoLoadEntities: false,
-  });
+  // console.log('🌐 ENV desde Railway:', {
+  //   type: 'mysql',
+  //   host: process.env.MYSQLHOST,
+  //   port: parseInt(process.env.MYSQLPORT || '3306', 10),
+  //   username: process.env.MYSQLUSER,
+  //   password: process.env.MYSQLPASSWORD,
+  //   database: process.env.MYSQL_DATABASE,
+  //   autoLoadEntities: false,
+  // });
 
   //   console.log('🌐 ENV desde Railway:', {
   //   type: 'mysql',
