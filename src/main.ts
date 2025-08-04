@@ -7,13 +7,12 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   console.log('🌐 ENV desde Railway:', {
     type: 'mysql',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || '3306', 10),
-    username: process.env.RAILWAY_PUBLIC_DOMAIN,
-
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    autoLoadEntities: true,
+    host: process.env.MYSQLHOST,
+    port: parseInt(process.env.MYSQLPORT || '3306', 10),
+    username: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQL_DATABASE,
+    autoLoadEntities: false,
   });
 
   //   console.log('🌐 ENV desde Railway:', {
