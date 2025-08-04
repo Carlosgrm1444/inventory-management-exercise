@@ -1,4 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -14,6 +15,9 @@ async function bootstrap() {
   //   autoLoadEntities: true,
   // });
 
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
   console.log('🌐 ENV desde Railway:', {
     type: 'mysql',
     host: configService.get('DB_HOST'),
@@ -22,8 +26,6 @@ async function bootstrap() {
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
   });
-
-  const app = await NestFactory.create(AppModule);
 
   // ✅ Validaciones globales
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
