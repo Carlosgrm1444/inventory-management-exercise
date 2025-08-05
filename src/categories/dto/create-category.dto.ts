@@ -9,8 +9,7 @@ export class CreateCategoryDto {
   name: string;
 
   @ApiProperty({
-    example:
-      'Categoría de productos electrónicos como computadoras, tablets y más',
+    example: 'Categoría',
   })
   @IsString({
     message: 'La descripción debe ser una cadena de texto',

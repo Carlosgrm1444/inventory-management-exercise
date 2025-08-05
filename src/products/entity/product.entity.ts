@@ -28,8 +28,8 @@ export class Product {
   @Column()
   stock: number;
 
-  @Column()
-  image: string;
+  @Column({ nullable: true })
+  image?: string;
 
   @Column({ default: true })
   activate: boolean;
