@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty()
@@ -8,7 +8,10 @@ export class CreateCategoryDto {
   })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example:
+      'Categoría de productos electrónicos como computadoras, tablets y más',
+  })
   @IsString({
     message: 'La descripción debe ser una cadena de texto',
   })
