@@ -12,9 +12,9 @@ import { RolesModule } from './roles/roles.module';
 import { StockModule } from './stock/stock.module';
 import { UsersModule } from './users/users.module';
 
-function parseBool(value: string | undefined): boolean {
-  return value === 'true';
-}
+// function parseBool(value: string | undefined): boolean {
+//   return value === 'true';
+// }
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ function parseBool(value: string | undefined): boolean {
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const dbUrl = new URL(configService.get<string>('DATABASE_URL') || '');
-
+        console.log(dbUrl);
         const config = {
           type: 'mysql' as const,
           host: dbUrl.hostname,
