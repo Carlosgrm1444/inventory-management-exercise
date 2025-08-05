@@ -6,6 +6,7 @@ import { StockMovement } from './entity/stock-movement.entity';
 
 @Injectable()
 export class StockService {
+  [x: string]: any;
   constructor(
     @InjectRepository(StockMovement)
     private stockRepo: Repository<StockMovement>,
