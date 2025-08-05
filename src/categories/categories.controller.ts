@@ -12,10 +12,10 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './entity/category.entity';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Categories')
 @ApiBearerAuth()
@@ -26,8 +26,8 @@ export class CategoriesController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  create(@Body() dto: CreateCategoryDto, data: Partial<Category>) {
-    return this.categoriesService.create(data);
+  create(@Body() dto: CreateCategoryDto) {
+    return this.categoriesService.create(dto);
   }
 
   @UseGuards(AuthGuard('jwt'))

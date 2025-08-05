@@ -26,8 +26,8 @@ export class RolesController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  create(@Body() dto: CreateRoleDto, data: Partial<Rol>) {
-    return this.rolesService.create(data);
+  create(@Body() dto: CreateRoleDto) {
+    return this.rolesService.create(dto);
   }
 
   @UseGuards(AuthGuard('jwt'))

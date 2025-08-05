@@ -33,8 +33,8 @@ export class ProductsController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  create(@Body() dto: CreateProductDto, data: Partial<Product>) {
-    return this.productsService.create(data);
+  create(@Body() dto: CreateProductDto) {
+    return this.productsService.create(dto);
   }
 
   @UseGuards(AuthGuard('jwt'))

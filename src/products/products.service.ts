@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { StockMovement } from '../stock/entity/stock-movement.entity';
 import { Product } from './entity/product.entity';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -18,8 +19,9 @@ export class ProductsService {
     private stockRepo: Repository<StockMovement>,
   ) {}
 
-  create(data: Partial<Product>) {
-    return this.productRepository.save(data);
+  create(data: CreateProductDto) {
+    const newProduct = this.productRepository.create(data);
+    return this.productRepository.save(newProduct);
   }
 
   findAll() {
